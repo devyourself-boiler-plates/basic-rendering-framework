@@ -1,0 +1,22 @@
+{
+  "name": "making-a-rendering-framework",
+  "version": "1.0.0",
+  "description": "boiler plate for making your own rendering framework from complete scratch",
+  "keywords": [],
+  "scripts": {
+    "start": "webpack serve --open --config ./webpack.config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.20.2",
+    "@babel/preset-react": "^7.22.15",
+    "babel-loader": "^9.1.3",
+    "copy-webpack-plugin": "^11.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-server": "^4.11.1"
+  }
+}
