@@ -11,7 +11,6 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
   },
-  devtool: "eval-source-map",
   module: {
     rules: [
       {
