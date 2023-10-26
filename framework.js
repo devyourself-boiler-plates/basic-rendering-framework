@@ -40,15 +40,15 @@ function rerender() {
 }
 
 export function makeState(initialValue) {
-  const i = currentStateIndex;
+  const thisStateIndex = currentStateIndex;
   currentStateIndex++;
-  if (stateStore[i] === undefined) stateStore[i] = initialValue;
+  if (stateStore[thisStateIndex] === undefined) stateStore[thisStateIndex] = initialValue;
   function updater(newValue) {
-    if (stateStore[i] !== newValue) {
-      stateStore[i] = newValue;
+    if (stateStore[thisStateIndex] !== newValue) {
+      stateStore[thisStateIndex] = newValue;
       currentStateIndex = 0;
       rerender();
     }
   }
-  return [stateStore[i], updater];
+  return [stateStore[thisStateIndex], updater];
 }
