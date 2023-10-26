@@ -1,5 +1,5 @@
 let currentStateIndex = 0;
-let state = [];
+let stateStore = [];
 let roots = null;
 
 export function render(component, element) {
@@ -36,19 +36,19 @@ function rerender() {
     roots[0].componentFunction(roots[0].props):
     roots[0];
   render(component, roots[1]);
-  state = state.slice(0, currentStateIndex);
+  stateStore = stateStore.slice(0, currentStateIndex);
 }
 
 export function makeState(initialValue) {
   const i = currentStateIndex;
   currentStateIndex++;
-  if (state[i] === undefined) state[i] = initialValue;
+  if (stateStore[i] === undefined) stateStore[i] = initialValue;
   function updater(newValue) {
-    if (state[i] !== newValue) {
-      state[i] = newValue;
+    if (stateStore[i] !== newValue) {
+      stateStore[i] = newValue;
       currentStateIndex = 0;
       rerender();
     }
   }
-  return [state[i], updater];
+  return [stateStore[i], updater];
 }
