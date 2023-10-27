@@ -1,10 +1,8 @@
+// Babel needs this function to create VDOM nodes from parsed JSX
 export const jsx = (tag, props) => {
-  if (typeof tag === "function") {
-    const element = tag(props);
-    element.componentFunction = tag;
-    return element;
-  }
   return { tag, props };
 };
 
+// Babel also needs a second alias to the function above (apparently).
+// The reason for this amounts to, "that how the Babel developers made it"
 export const jsxs = jsx;
