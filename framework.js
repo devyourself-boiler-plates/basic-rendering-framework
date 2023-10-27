@@ -1,52 +1,58 @@
-let currentStateIndex = 0;
-let stateStore = [];
-let roots = null;
+let currentStateIndex = 0; 
+let stateStore = []; 
+let roots = null; 
 
-export function render(component, element) {
-  if (!roots) roots = [component, element];
-  let child;
-  if (typeof component === 'string' || typeof component === 'number') {
-    child = document.createTextNode(String(component));
-  } else {
-    child = document.createElement(component.tag);
-    Object.entries(component.props || {}).forEach(([name, value]) => {
-      if (name === "style") {
-        Object.entries(value).forEach(([styleName, styleValue]) => {
-          child.style[styleName] = styleValue;
-        });
-      } else if (name.startsWith("on") && name.toLowerCase() in window) {
-        child.addEventListener(name.toLowerCase().slice(2), value);
-      } else if (name !== "children") {
-        child.setAttribute(name, value);
-      }
-    });
-    if (Array.isArray(component.props.children)) {
-      Array.from(component.props.children).flat().filter((x) => !!x).forEach((node) => render(node, child));
-    } else if (component.props.children) {
-      render(component.props.children, child);
-    }
+export function render(vdomNode, domElement) {
+  if (!roots) roots = [vdomNode, domElement];   
+
+  if (typeof vdomNode.tag === "function") {
+    const freshVdomNode = vdomNode.tag(vdomNode.props);
+    render(freshVdomNode, domElement);
   }
-  element.appendChild(child);
+  else {
+    let newElement;
+    if (typeof vdomNode === 'string' || typeof vdomNode === 'number') {    
+      newElement = document.createTextNode(String(vdomNode)); 
+    } else {
+      newElement = document.createElement(vdomNode.tag);
+      Object.entries(vdomNode.props || {}).forEach(([name, value]) => {
+        if (name === "style") {
+          Object.entries(value).forEach(([styleName, styleValue]) => {
+            newElement.style[styleName] = styleValue;
+          });
+        } else if (name.startsWith("on") && name.toLowerCase() in window) {
+          newElement.addEventListener(name.toLowerCase().slice(2), value);
+        } else if (name !== "children") {
+          newElement.setAttribute(name, value);
+        }
+      });
+      
+      if (Array.isArray(vdomNode.props.children)) {
+        Array.from(vdomNode.props.children).forEach((childVdomNode) => render(childVdomNode, newElement));
+      } else if (vdomNode.props.children) {
+        render(vdomNode.props.children, newElement);
+      }
+    }
+    domElement.appendChild(newElement);
+  }
 };
 
 function rerender() {
   roots[1].innerHTML = "";
   currentStateIndex = 0;
-  const component = roots[0].componentFunction ?
-    roots[0].componentFunction(roots[0].props):
-    roots[0];
-  render(component, roots[1]);
+  render(roots[0], roots[1]);
   stateStore = stateStore.slice(0, currentStateIndex);
 }
 
 export function makeState(initialValue) {
   const thisStateIndex = currentStateIndex;
   currentStateIndex++;
+  
   if (stateStore[thisStateIndex] === undefined) stateStore[thisStateIndex] = initialValue;
+  
   function updater(newValue) {
     if (stateStore[thisStateIndex] !== newValue) {
       stateStore[thisStateIndex] = newValue;
-      currentStateIndex = 0;
       rerender();
     }
   }
